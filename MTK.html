@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Game MTK: Bilangan Kuadrat</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    background: linear-gradient(135deg, #11998e, #38ef7d);
+    font-family: 'Montserrat', sans-serif;
+    margin: 0;
+    padding: 0;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+    justify-content: center;
+  }
+  h1 {
+    font-weight: 700;
+    font-size: 25px;
+    margin-bottom: 0.3em;
+    text-shadow: 2px 2px 6px rgba(0,0,0,0.25);
+  }
+  #game-box {
+    background: rgba(255 255 255 / 0.15);
+    border-radius: 20px;
+    padding: 2.5rem 3rem;
+    max-width: 420px;
+    width: 90%;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    text-align: center;
+  }
+  #timer {
+    font-weight: 700;
+    font-size: 1.8rem;
+    margin-bottom: 0.6em;
+    letter-spacing: 1.2px;
+  }
+  #score {
+    font-weight: 700;
+    font-size: 1.3rem;
+    margin-bottom: 1.4em;
+  }
+  #question {
+    font-weight: 700;
+    font-size: 1.0rem;
+    margin-bottom: 1.2em;
+    text-shadow: 1px 1px 4px rgba(0,0,0,0.12);
+  }
+  input[type="number"] {
+    font-size: 1.3rem;
+    padding: 0.6rem 1.2rem;
+    border-radius: 10px;
+    border: none;
+    width: 100%;
+    max-width: 200px;
+    text-align: center;
+    font-weight: 600;
+    outline: none;
+    margin-bottom: 1.4em;
+  }
+  button {
+    background: #0f766e;
+    color: #d1fae5;
+    font-weight: 700;
+    font-size: 1.2rem;
+    border-radius: 50px;
+    border: none;
+    padding: 0.8rem 2rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 15px #0f766eaa;
+    user-select: none;
+  }
+  button:hover:not(:disabled) {
+    background-color: #115e59;
+    box-shadow: 0 6px 25px #115e5988;
+  }
+  button:disabled {
+    background-color: #6b7280;
+    box-shadow: none;
+    cursor: not-allowed;
+  }
+  #feedback {
+    font-weight: 700;
+    min-height: 1.6em;
+    font-size: 1.1rem;
+    margin-bottom: 1.4em;
+  }
+
+a{
+cursor: none;
+text-decoration: none;
+color: red;
+}
+</style>
+</head>
+<body>
+  <h1>Game MTK: Bilangan Kuadrat</h1>
+  <div id="game-box">
+    <div id="timer">Waktu: 30 detik</div>
+    <div id="score">Skor: 0</div>
+    <div id="question">Tekan "Mulai" untuk mulai bermain!</div>
+    <input type="number" id="answer" placeholder="Masukkan jawaban" disabled autocomplete="off" />
+    <div id="feedback"></div>
+    <button id="submit" disabled>Jawab</button><br>
+    <button id="start">Mulai</button>
+  </div>
+<h3><b><a href="/index.html">Kembali</a></b></h3>
+<script>
+(() => {
+  const timerEl = document.getElementById('timer');
+  const scoreEl = document.getElementById('score');
+  const questionEl = document.getElementById('question');
+  const answerInput = document.getElementById('answer');
+  const submitBtn = document.getElementById('submit');
+  const startBtn = document.getElementById('start');
+  const feedbackEl = document.getElementById('feedback');
+
+  let timeLeft = 30;
+  let score = 0;
+  let currentNumber = null;
+  let timerInterval = null;
+  let gameRunning = false;
+
+  function randInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  function generateQuestion() {
+    currentNumber = randInt(2, 20); // base number for the square
+    questionEl.textContent = `Hitung kuadrat dari ${currentNumber}: ${currentNumber}² = ?`;
+  }
+
+  function updateTimer() {
+    timerEl.textContent = `Waktu: ${timeLeft} detik`;
+  }
+
+  function updateScore() {
+    scoreEl.textContent = `Skor: ${score}`;
+  }
+
+  function startGame() {
+    timeLeft = 30;
+    score = 0;
+    gameRunning = true;
+    answerInput.disabled = false;
+    submitBtn.disabled = false;
+    startBtn.disabled = true;
+    feedbackEl.textContent = '';
+    updateTimer();
+    updateScore();
+    generateQuestion();
+    answerInput.value = '';
+    answerInput.focus();
+
+    timerInterval = setInterval(() => {
+      timeLeft--;
+      updateTimer();
+      if (timeLeft <= 0) {
+        endGame();
+      }
+    }, 1000);
+  }
+
+  function endGame() {
+    clearInterval(timerInterval);
+    gameRunning = false;
+    answerInput.disabled = true;
+    submitBtn.disabled = true;
+    startBtn.disabled = false;
+    questionEl.textContent = `Waktu habis! Skor akhir kamu: ${score}`;
+    feedbackEl.textContent = '';
+  }
+
+  function checkAnswer() {
+    if (!gameRunning) return;
+    const userAnswer = Number(answerInput.value);
+    const correctAnswer = currentNumber * currentNumber;
+    
+    if (answerInput.value.trim() === '') {
+      feedbackEl.textContent = 'Masukkan jawaban dulu!';
+      feedbackEl.style.color = '#fbbf24'; // yellow
+      return;
+    }
+
+    if (userAnswer === correctAnswer) {
+      score++;
+      feedbackEl.textContent = 'Benar! 👍';
+      feedbackEl.style.color = 'white'; // green
+    } else {
+      feedbackEl.textContent = `Salah! Jawaban yang benar: ${correctAnswer}`;
+      feedbackEl.style.color = 'red'; // red
+    }
+    updateScore();
+    generateQuestion();
+    answerInput.value = '';
+    answerInput.focus();
+  }
+
+  submitBtn.addEventListener('click', checkAnswer);
+
+  answerInput.addEventListener('keyup', (e) => {
+    if (e.key === 'Enter') {
+      submitBtn.click();
+    }
+  });
+
+  startBtn.addEventListener('click', startGame);
+
+})();
+</script>
+
+</body>
+</html>

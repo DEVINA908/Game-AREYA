@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Kuis Pemrograman Dasar</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    background: linear-gradient(120deg, #1e3c72, #2a5298);
+    font-family: 'Poppins', sans-serif;
+    color: #f0f0f0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    padding: 2px;
+  }
+  .container {
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    max-width: 650px;
+    width: 100%;
+    padding: 32px 36px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  h1 {
+    margin-bottom: 16px;
+    font-weight: 700;
+    font-size: 1.5rem;
+    letter-spacing: 2px;
+    text-align: center;
+    user-select: none;
+  }
+  .top-bar {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 26px;
+    font-size: 1.25rem;
+    font-weight: 600;
+    user-select: none;
+  }
+  #timer {
+    background: #e74c3c;
+    padding: 10px 12px;
+    border-radius: 16px;
+    letter-spacing: 1.3px;
+    box-shadow: 0 0 14px #e74c3c;
+    min-width: 130px;
+    text-align: center;
+  }
+  #score {
+    background: #27ae60;
+    padding: 10px 12px;
+    border-radius: 16px;
+    letter-spacing: 1.3px;
+    box-shadow: 0 0 14px #27ae60;
+    min-width: 130px;
+    text-align: center;
+  }
+  .question {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 32px;
+    user-select: none;
+    min-height: 100px;
+    text-align: center;
+  }
+  .answers {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .answer-btn {
+    background: rgba(255 255 255 / 0.18);
+    border: none;
+    border-radius: 16px;
+    padding: 16px 19px;
+    color: #f0f0f0;
+    font-weight: 400;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    box-shadow: 0 5px 22px rgba(0,0,0,0.3);
+    user-select: none;
+    text-align: left;
+  }
+  .answer-btn:hover {
+    background: rgba(255 255 255 / 0.36);
+  }
+  .answer-btn.correct {
+    background: #27ae60;
+    box-shadow: 0 0 18px #27ae60;
+    color: #ecf0f1;
+  }
+  .answer-btn.wrong {
+    background: #e74c3c;
+    box-shadow: 0 0 18px #e74c3c;
+    color: #ecf0f1;
+  }
+  .next-btn {
+    margin-top: 38px;
+    padding: 16px 50px;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #1e3c72;
+    background: #ecf0f1;
+    border-radius: 36px;
+    border: none;
+    cursor: pointer;
+    user-select: none;
+    box-shadow: 0 10px 30px rgba(236,240,241,0.9);
+    transition: background 0.3s ease, color 0.3s ease;
+    align-self: center;
+  }
+  .next-btn:disabled {
+    background: #bdc3c7;
+    cursor: not-allowed;
+    box-shadow: none;
+    color: #7f8c8d;
+  }
+  .next-btn:hover:not(:disabled) {
+    background: #2980b9;
+    color: #fff;
+  }
+  .result {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-top: 52px;
+    text-align: center;
+    user-select: none;
+    color: #f0f0f0;
+  }
+  .restart-btn {
+    margin-top: 42px;
+    padding: 18px 56px;
+    font-size: 1.5rem;
+    font-weight: 700;
+    border-radius: 40px;
+    border: none;
+    cursor: pointer;
+    background: #27ae60;
+    color: #ecf0f1;
+    box-shadow: 0 10px 32px #27ae60;
+    user-select: none;
+    transition: background 0.3s ease;
+    align-self: center;
+  }
+  .restart-btn:hover {
+    background: #1e8449;
+  }
+  @media (max-width: 560px) {
+    .container {
+      padding: 28px 20px;
+    }
+    h2 {
+      font-size: 1.9rem;
+    }
+    .question {
+      font-size: 1.3rem;
+      min-height: 90px;
+    }
+    .answer-btn {
+      font-size: 1.1rem;
+      padding: 14px 16px;
+    }
+    .next-btn, .restart-btn {
+      font-size: 1.25rem;
+      padding: 14px 40px;
+    }
+  }
+  
+  a{
+cursor: none;
+text-decoration: none;
+color: red;
+}
+</style>
+</head>
+<body>
+  <div class="container" role="main" aria-live="polite" aria-atomic="true">
+    <center><h2>Pemrograman Dasar</h2></center>
+    <div class="top-bar">
+      <div id="timer" aria-label="Sisa waktu">Waktu: 05:00</div>
+      <div id="score" aria-label="Skor saat ini">Skor: 0/0</div>
+    </div>
+    <div id="quiz" aria-live="polite">
+      <div class="question" id="question">Sedang memuat soal...</div>
+      <div class="answers" id="answers"></div>
+      <button id="next-btn" class="next-btn" disabled>Soal Berikutnya</button>
+    </div>
+    
+    <h3><b><a href="/index.html">Kembali</a></b></h3>
+    
+    <div id="result" class="result" style="display:none;"></div>
+    <button id="restart-btn" class="restart-btn" style="display:none;">Mulai Ulang Kuis</button>
+  </div>
+
+
+<script>
+  const questions = [
+    {
+      q: "Apa kepanjangan dari HTML?",
+      a: ["Hyper Text Markup Language", "Home Tool Markup Language", "Hyperlinks and Text Markup Language",],
+      correct: 0
+    },
+    {
+      q: "Bahasa apa yang digunakan untuk mengatur tampilan halaman web?",
+      a: ["HTML", "JQuery", "CSS", ],
+      correct: 2
+    },
+    {
+      q: "Bahasa pemrograman apa yang biasanya digunakan untuk membuat halaman web interaktif?",
+      a: ["Python", "JavaScript", "PHP"],
+      correct: 1
+    },
+    {
+      q: "Simbol apa yang digunakan untuk memberi komentar di JavaScript?",
+      a: ["//", "/* */", "<!-- -->",],
+      correct: 0
+    },
+    {
+      q: "Keyword mana yang digunakan untuk mendeklarasikan variabel di JavaScript?",
+      a: ["var", "const", "Semua di atas"],
+      correct: 3
+    },
+    {
+      q: "Apa kepanjangan dari CSS?",
+      a: ["Creative Style Sheets", "Cascading Style Sheets", "Computer Style Sheets"],
+      correct: 1
+    },
+    {
+      q: "Apa itu 'fungsi' dalam pemrograman?",
+      a: ["Blok kode yang dapat digunakan ulang", "Jenis variabel", "Struktur data",],
+      correct: 0
+    },
+    {
+      q: "Simbol apa yang digunakan untuk mengakhiri suatu pernyataan dalam kebanyakan bahasa pemrograman?",
+      a: [";", ",", ":"],
+      correct: 1
+    },
+    {
+      q: "Apa tujuan utama JavaScript di pengembangan web?",
+      a: ["Membuat halaman web statis", "Mengatur layout halaman", "Membuat halaman web interaktif",],
+      correct: 2
+    },
+    {
+      q: "Apa itu array dalam pemrograman?",
+      a: ["Tipe data untuk menyimpan beberapa nilai", "Bahasa pemrograman", "Jenis loop"],
+      correct: 0
+    },
+    {
+      q: "Bagaimana cara membuat perulangan 'for' di JavaScript?",
+      a: ["for i in range()", "for (let i = 0; i < 5; i++)", "for i=1 to 10",],
+      correct: 1
+    },
+    {
+      q: "Manakah yang bukan merupakan paradigma pemrograman?",
+      a: ["Object-Oriented", "Functional", "Desain Visual"],
+      correct: 3
+    },
+    {
+      q: "Tag HTML mana yang digunakan untuk menambahkan JavaScript pada halaman web?",
+      a: ["<js>", "<javascript>", "<script>",],
+      correct: 2
+    },
+    {
+      q: "Apa kepanjangan API dalam pemrograman?",
+      a: ["Application Programming Interface", "Applied Program Information", "Advanced Programming Internet",],
+      correct: 0
+    },
+    {
+      q: "Operator mana yang digunakan untuk penugasan (assignment) di pemrograman?",
+      a: ["==", "=", "===",],
+      correct: 1
+    },
+    {
+      q: "Bagaimana cara mendeklarasikan variabel konstan di JavaScript?",
+      a: ["let nama;", "const nama;", "var nama;"],
+      correct: 1
+    },
+  ];
+
+  const totalQuestions = questions.length;
+  const quizEl = document.getElementById('quiz');
+  const questionEl = document.getElementById('question');
+  const answersEl = document.getElementById('answers');
+  const nextBtn = document.getElementById('next-btn');
+  const timerEl = document.getElementById('timer');
+  const scoreEl = document.getElementById('score');
+  const resultEl = document.getElementById('result');
+  const restartBtn = document.getElementById('restart-btn');
+
+  let currentIndex = 0;
+  let score = 0;
+  let timer;
+  let timeRemaining = 300; // 5 menit dalam detik
+  let answeredCorrectlyThisQuestion = false;
+
+  function startTimer() {
+    updateTimerDisplay();
+    timer = setInterval(() => {
+      timeRemaining--;
+      updateTimerDisplay();
+      if (timeRemaining <= 0) {
+        clearInterval(timer);
+        endQuiz();
+      }
+    }, 1000);
+  }
+
+  function updateTimerDisplay() {
+    const menit = Math.floor(timeRemaining / 60);
+    const detik = timeRemaining % 60;
+    timerEl.textContent = `Waktu: ${menit.toString().padStart(2,'0')}:${detik.toString().padStart(2,'0')}`;
+    if(timeRemaining <= 10) {
+      timerEl.style.background = "#c0392b";
+      timerEl.style.boxShadow = "0 0 14px #c0392b";
+    }
+  }
+
+  function showQuestion() {
+    answeredCorrectlyThisQuestion = false;
+    nextBtn.disabled = true;
+    questionEl.textContent = `Soal ${currentIndex+1}. ${questions[currentIndex].q}`;
+    answersEl.innerHTML = '';
+    questions[currentIndex].a.forEach((answerText, i) => {
+      const btn = document.createElement('button');
+      btn.classList.add('answer-btn');
+      btn.textContent = answerText;
+      btn.setAttribute('data-index', i);
+      btn.setAttribute('type', 'button');
+      btn.addEventListener('click', selectAnswer);
+      answersEl.appendChild(btn);
+    });
+    updateScoreDisplay();
+  }
+
+  function selectAnswer(e) {
+    const selectedBtn = e.target;
+    const selectedIndex = parseInt(selectedBtn.getAttribute('data-index'));
+    const correctIndex = questions[currentIndex].correct;
+    const answerButtons = answersEl.querySelectorAll('.answer-btn');
+
+    // Nonaktifkan semua tombol jawaban setelah memilih
+    answerButtons.forEach(btn => {
+      btn.disabled = true;
+      const btnIndex = parseInt(btn.getAttribute('data-index'));
+      if (btnIndex === correctIndex) {
+        btn.classList.add('correct');
+      }
+    });
+
+    if(selectedIndex === correctIndex) {
+      score++;
+      answeredCorrectlyThisQuestion = true;
+      selectedBtn.classList.add('correct');
+    } else {
+      selectedBtn.classList.add('wrong');
+    }
+
+    nextBtn.disabled = false;
+    updateScoreDisplay();
+  }
+
+  function updateScoreDisplay() {
+    scoreEl.textContent = `Skor: ${score}/${currentIndex + (answeredCorrectlyThisQuestion ? 1 : 0)}`;
+  }
+
+  function nextQuestion() {
+    currentIndex++;
+    if (currentIndex < totalQuestions) {
+      showQuestion();
+    } else {
+      endQuiz();
+    }
+  }
+
+  function endQuiz() {
+    clearInterval(timer);
+    quizEl.style.display = 'none';
+    resultEl.style.display = 'block';
+    restartBtn.style.display = 'inline-block';
+    resultEl.textContent = `Kuis selesai! Skor Anda: ${score} dari ${totalQuestions}`;
+    timerEl.textContent = "Waktu: 00:00";
+    timerEl.style.background = 'rgba(255 255 255 / 0.15)';
+    timerEl.style.boxShadow = 'none';
+    scoreEl.textContent = `Skor Akhir: ${score}/${totalQuestions}`;
+  }
+
+  function restartQuiz() {
+    currentIndex = 0;
+    score = 0;
+    timeRemaining = 300;
+    quizEl.style.display = 'flex';
+    resultEl.style.display = 'none';
+    restartBtn.style.display = 'none';
+    timerEl.style.background = '#e74c3c';
+    timerEl.style.boxShadow = '0 0 14px #e74c3c';
+    showQuestion();
+    startTimer();
+  }
+
+  nextBtn.addEventListener('click', nextQuestion);
+  restartBtn.addEventListener('click', restartQuiz);
+
+  // Mulai kuis
+  showQuestion();
+  startTimer();
+</script>
+</body>
+</html>
+
